@@ -1,1 +1,4 @@
 ./test
+./arlulaapi.egg-info
+./build/lib/arlulaapi
+./arlulaapi/__pycache__
