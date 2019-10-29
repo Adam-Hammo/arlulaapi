@@ -43,6 +43,7 @@ orders = arlula_session.list_orders()
 As well as supporting all of the Arlula API endpoints, this package provides other mechanisms of utilising the API.
 
 **Group search**
+
 The ArlulaSession `gsearch` method allows you to perform multiple searches at once, and have the results collated into a large search result object. To use the group search method, pass a list of _GroupSearch_ objects, as below. The parameters for each search must pass the same requirements as the `search` method.
 ```python
 group_search = [
@@ -70,6 +71,7 @@ group_search = [
 search_result=arlula_session.gsearch(group_search)
 ```
 **Order download**
+
 The Arlula API also provides the option to download an entire order's resources into a specified folder, as below. You may also pass an optional suppress parameter to remove all console output.
 ```python
 arlula_session.get_order_resources(
