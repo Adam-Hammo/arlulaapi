@@ -1,4 +1,3 @@
-from collections import namedtuple
 import grequests
 import base64
 import requests
