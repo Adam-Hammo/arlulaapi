@@ -10,15 +10,19 @@ warnings.filterwarnings("ignore")
 
 name = "arlulaapi"
 
+
 class ArlulaObj(object):
     def __init__(self, d):
         for a, b in d.items():
             if isinstance(b, (list, tuple)):
-               setattr(self, a, [ArlulaObj(x) if isinstance(x, dict) else x for x in b])
+                setattr(self, a, [ArlulaObj(x) if isinstance(
+                    x, dict) else x for x in b])
             else:
-               setattr(self, a, ArlulaObj(b) if isinstance(b, dict) else b)
+                setattr(self, a, ArlulaObj(b) if isinstance(b, dict) else b)
+
     def __repr__(self):
-        return str(['{}: {}'.format(attr,value) for attr, value in self.__dict__.items()])[1:-1].replace('\'', '')
+        return str(['{}: {}'.format(attr, value) for attr, value in self.__dict__.items()])[1:-1].replace('\'', '')
+
 
 def gsearch_exception(r, e):
     return("request failed")
@@ -105,7 +109,7 @@ class ArlulaSession:
         response = grequests.map(searches, exception_handler=gsearch_exception)
 
         result = []
-        for r in response :
+        for r in response:
             result.append([ArlulaObj(x) for x in json.loads(r.text)])
         return result
 
@@ -138,7 +142,7 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return [ArlulaObj(json.loads(str(r).replace("\'","\"")))
+            return [ArlulaObj(json.loads(str(r).replace("\'", "\"")))
                     for r in eval(response.text, {'__builtins__': None}, {})]
 
     def order(self,
@@ -201,7 +205,7 @@ class ArlulaSession:
                         sys.stdout.flush()
         if not suppress:
             sys.stdout.write('\n')
-            sys.stdout.write('download complete')
+            sys.stdout.write('download complete\n')
 
     def get_order_resources(self,
                             id="",

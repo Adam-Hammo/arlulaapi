@@ -28,9 +28,12 @@ order = arlula_session.order(
 )
 
 ## Downloads the resource to the specified filepath
+# Optional suppress parameter controls console output
 arlula_session.get_resource(
     id=resourceId,
-    filepath="downloads/thumbnail.jpg"
+    filepath="downloads/thumbnail.jpg",
+    # optional
+    suppress="false"
 )
 
 order = arlula_session.get_order(
