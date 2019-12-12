@@ -10,7 +10,7 @@ import arlulaapi
 arlula_session = arlulaapi.ArlulaSession(key, secret)
 ```
 ## API Endpoints
-This package contains methods for each of the supported API endpoints. Each method returns a JSON object as prescribed in the API documentation. An example of each method is below:
+This package contains methods for each of the supported API endpoints. Each method returns an object as prescribed in the API documentation. An example of each method is below:
 ```python
 search_result = arlula_session.search(
     start="2014-01-01",

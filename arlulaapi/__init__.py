@@ -17,6 +17,8 @@ class ArlulaObj(object):
                setattr(self, a, [ArlulaObj(x) if isinstance(x, dict) else x for x in b])
             else:
                setattr(self, a, ArlulaObj(b) if isinstance(b, dict) else b)
+    def __repr__(self):
+        return str(['{}: {}'.format(attr,value) for attr, value in self.__dict__.items()])[1:-1].replace('\'', '')
 
 def gsearch_exception(r, e):
     return("request failed")
@@ -104,7 +106,7 @@ class ArlulaSession:
 
         result = []
         for r in response :
-            result.append([ArlulaObj(x) for x in json.loads([r.text for r in response])])
+            result.append([ArlulaObj(x) for x in json.loads(r.text)])
         return result
 
     def get_order(self,
