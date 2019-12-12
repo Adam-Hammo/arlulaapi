@@ -217,6 +217,11 @@ class ArlulaSession:
         counter = 1
         total = len(res.resources)
         for r in res.resources:
+            url = self.baseURL + "/api/order/resource/get"
+            querystring = {"id": id}
+
+            headers = self.header
+            
             if not suppress:
                 print("File {} of {}".format(counter, total))
             try:
