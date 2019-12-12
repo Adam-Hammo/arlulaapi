@@ -10,6 +10,14 @@ warnings.filterwarnings("ignore")
 
 name = "arlulaapi"
 
+class ArlulaObj(object):
+    def __init__(self, d):
+        for a, b in d.items():
+            if isinstance(b, (list, tuple)):
+               setattr(self, a, [ArlulaObj(x) if isinstance(x, dict) else x for x in b])
+            else:
+               setattr(self, a, ArlulaObj(b) if isinstance(b, dict) else b)
+
 def gsearch_exception(r, e):
     return("request failed")
 
@@ -71,7 +79,7 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return json.loads(response.text, object_hook=lambda d: namedtuple('SearchResponse', d.keys())(*d.values()))
+            return ArlulaObj(json.loads(response.text))
 
     def gsearch(self,
                 params):
@@ -94,7 +102,10 @@ class ArlulaSession:
 
         response = grequests.map(searches, exception_handler=gsearch_exception)
 
-        return [json.loads(r.text, object_hook=lambda d: namedtuple('SearchResponse', d.keys())(*d.values())) for r in response]
+        result = []
+        for r in response :
+            result.append([ArlulaObj(x) for x in json.loads([r.text for r in response])])
+        return result
 
     def get_order(self,
                   id=""):
@@ -111,10 +122,9 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return json.loads(response.text, object_hook=lambda d: namedtuple('OrderResponse', d.keys())(*d.values()))
+            return ArlulaObj(json.loads(response.text))
 
-    def list_orders(self,
-                    id=""):
+    def list_orders(self):
 
         url = self.baseURL+"/api/order/list"
 
@@ -126,7 +136,8 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return [json.loads(r.text, object_hook=lambda d: namedtuple('OrderResponse', d.keys())(*d.values())) for r in response]
+            return [ArlulaObj(json.loads(str(r).replace("\'","\"")))
+                    for r in eval(response.text, {'__builtins__': None}, {})]
 
     def order(self,
               id=None,
@@ -152,7 +163,7 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return json.loads(response.text, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+            return ArlulaObj(json.loads(response.text))
 
     def get_resource(self,
                      id="",
@@ -191,9 +202,9 @@ class ArlulaSession:
             sys.stdout.write('download complete')
 
     def get_order_resources(self,
-                           id="",
-                           folder="",
-                           suppress=False):
+                            id="",
+                            folder="",
+                            suppress=False):
         if not os.path.exists(folder):
             os.makedirs(folder)
         res = self.get_order(id=id)
