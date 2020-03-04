@@ -220,7 +220,7 @@ class ArlulaSession:
             querystring = {"id": id}
 
             headers = self.header
-            
+
             if not suppress:
                 print("File {} of {}".format(counter, total))
             try:

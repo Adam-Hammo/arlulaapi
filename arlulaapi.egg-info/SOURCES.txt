@@ -4,4 +4,6 @@ arlulaapi/__init__.py
 arlulaapi.egg-info/PKG-INFO
 arlulaapi.egg-info/SOURCES.txt
 arlulaapi.egg-info/dependency_links.txt
+arlulaapi.egg-info/requires.txt
 arlulaapi.egg-info/top_level.txt
+test/test.py
