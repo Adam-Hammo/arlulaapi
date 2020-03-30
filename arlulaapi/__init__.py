@@ -84,7 +84,7 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return ArlulaObj(json.loads(response.text))
+            return [ArlulaObj(x) for x in json.loads(response.text)]
 
     def gsearch(self,
                 params):

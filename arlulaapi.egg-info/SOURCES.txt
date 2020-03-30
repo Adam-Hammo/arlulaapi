@@ -1,6 +1,5 @@
 README.md
 setup.py
-arlulaapi/__init__.py
 arlulaapi.egg-info/PKG-INFO
 arlulaapi.egg-info/SOURCES.txt
 arlulaapi.egg-info/dependency_links.txt

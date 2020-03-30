@@ -7,7 +7,11 @@ This package requires an active Arlula account and access to the API credentials
 `pip install arlulaapi`
 ## Initiation
 Instantiate an ArlulaSession object using your API credentials as below. This will validate your credentials and store them for the remainder of the session.
+# Important note:
+There is currently a temporary issue with the installation of this package via pip. If the above does not work, you will need to install this package manually. To do so, download \_\_init\_\_.py from the [source](https://github.com/Adam-Hammo/arlulaapi). Rename this file arlulaapi.py, and drop it into your python packages folder (on Windows, this is usually `C:\Users\{USER}\AppData\Local\Programs\Python\Python37-32\Lib\site-packages`). Alternatively, you can drop this file into your current working directory.
+Apologies for the inconvenience, this issue is currently being looked into.
 
+## Initialisation
 ```python
 import arlulaapi
 arlula_session = arlulaapi.ArlulaSession(key, secret)
