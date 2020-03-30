@@ -1,7 +1,7 @@
 # **Arlula API Python Package**
 
 ## Prerequisites
-This package requires an active Arlula account and access to the API credentials. If you don't have an account, you can create one at <api.arlula.com/signup>.
+This package requires an active Arlula account and access to the API credentials. If you don't have an account, you can create one at [api.arlula.com/signup](https://api.arlula.com/signup).
 
 ## Installation
 `pip install arlulaapi`
