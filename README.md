@@ -12,11 +12,6 @@ import arlulaapi
 arlula_session = arlulaapi.ArlulaSession(key, secret)
 ```
 
-## Important note:
-There is currently a temporary issue with the installation of this package via pip. If the above does not work, you will need to install this package manually. To do so, download \_\_init\_\_.py from the [source](https://github.com/Adam-Hammo/arlulaapi). Rename this file arlulaapi.py, and drop it into your python packages folder (on Windows, this is usually `C:\Users\{USER}\AppData\Local\Programs\Python\Python37-32\Lib\site-packages`). Alternatively, you can drop this file into your current working directory.
-Apologies for the inconvenience, this issue is currently being looked into.
-
-
 ## API Endpoints
 This package contains methods for each of the supported API endpoints. Each method returns an object as prescribed in the API documentation. An example of each method is below:
 ```python

@@ -1,4 +1,6 @@
 test
+dist
+build
+__pycache__
+*.__pycache__
 arlulaapi.egg-info
-build/lib/arlulaapi
-arlulaapi/__pycache__
