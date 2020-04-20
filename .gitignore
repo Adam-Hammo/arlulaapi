@@ -2,5 +2,7 @@ test
 dist
 build
 __pycache__
-*.__pycache__
+*/__pycache__
+arlulaapi/__pycache__
+*.cpython
 arlulaapi.egg-info

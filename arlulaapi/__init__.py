@@ -5,7 +5,9 @@ import json
 import sys
 import warnings
 import os
-warnings.filterwarnings("ignore")
+import math
+import pgeocode
+# warnings.filterwarnings("ignore")
 
 name = "arlulaapi"
 
@@ -35,6 +37,10 @@ class ArlulaSessionError(Exception):
         return self.value
 
 
+class ArlulaSessionWarning(Warning):
+    pass
+
+
 class ArlulaSession:
 
     def __init__(self, key, secret):
@@ -45,7 +51,20 @@ class ArlulaSession:
             'Authorization': "Basic "+self.token,
         }
         self.baseURL = "https://api.arlula.com"
+        self.max_cloud = 100
+        self.max_cloud_vals = {"landsat": 100, "SIIS": 100}
         self.validate_creds()
+
+    def set_max_cloud(self, val):
+        if (val<0 or val > 100) :
+            raise ArlulaSessionError("Max cloud value must be between 0 and 100")
+        self.max_cloud = val
+
+    def get_max_cloud(self):
+        return self.max_cloud
+
+    def filter_cloud(self, r):
+        return r['cloud']/self.max_cloud_vals[r["supplier"]]*100<=self.max_cloud
 
     def validate_creds(self):
         url = self.baseURL+"/api/test"
@@ -67,7 +86,6 @@ class ArlulaSession:
                south=None,
                east=None,
                west=None):
-
         url = self.baseURL+"/api/search"
 
         querystring = {"start": start, "end": end,
@@ -80,15 +98,13 @@ class ArlulaSession:
         headers = self.header
         response = requests.request(
             "GET", url, headers=headers, params=querystring)
-
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return [ArlulaObj(x) for x in json.loads(response.text)]
+            return [ArlulaObj(x) for x in json.loads(response.text) if self.filter_cloud(x)]
 
     def gsearch(self,
                 params):
-
         searches = []
         for p in params:
             url = self.baseURL+"/api/search"
@@ -106,10 +122,9 @@ class ArlulaSession:
                 url, headers=headers, params=querystring))
 
         response = grequests.map(searches, exception_handler=gsearch_exception)
-
         result = []
         for r in response:
-            result.append([ArlulaObj(x) for x in json.loads(r.text)])
+            result.append([ArlulaObj(x) for x in json.loads(r.text) if self.filter_cloud(x)])
         return result
 
     def get_order(self,
@@ -233,3 +248,44 @@ class ArlulaSession:
             counter += 1
         if not suppress:
             print("All files downloaded")
+
+    def parse_postcode(self, res):
+        if math.isnan(res.latitude):
+            raise ArlulaSessionError(
+                "Could not find postcode {}".format(res.postal_code))
+        if res.accuracy >= 5:
+            warnings.warn(
+                "Postcode {} lat/long could be inaccurate".format(res.postal_code), ArlulaSessionWarning)
+        return {'postcode': res.postal_code, 'lat': res.latitude, 'long': res.longitude, 'name': res.place_name}
+
+    def search_postcode(self,
+                        start=None,
+                        end=None,
+                        res=None,
+                        country=None,
+                        postcode=None,
+                        boxsize=None):
+        dist_to_deg_lat = 110.574
+        dist_to_deg_long_factor = 111.32
+        try:
+            nomi = pgeocode.Nominatim(country)
+        except ValueError:
+            raise ArlulaSessionError("Invalid country code {}".format(country))
+        if isinstance(postcode, str) or isinstance(postcode, int):
+            postcode = [postcode]
+        data = nomi.query_postal_code(postcode)
+        params = []
+        pcs = [self.parse_postcode(d[1]) for d in data.iterrows()]
+        if boxsize is None:
+            params = [{'start': start, 'end': end, 'res': res,
+                       'lat': pc['lat'], 'long': pc['long']} for pc in pcs]
+        else:
+            params = [{'start': start, 'end': end, 'res': res,
+                       'south': pc['lat']-boxsize/dist_to_deg_lat,
+                       'north': pc['lat']+boxsize/dist_to_deg_lat,
+                       'west': pc['long']-boxsize/(math.cos(math.radians(pc['lat']))*dist_to_deg_long_factor),
+                       'east': pc['long']+boxsize/(math.cos(math.radians(pc['lat']))*dist_to_deg_long_factor)} for pc in pcs]
+        search_res = self.gsearch(params=params)
+        if len(pcs) == 1:
+            return ArlulaObj({'location': pcs[0], 'data': search_res[0]})
+        return [ArlulaObj({'location': pcs[i], 'data': search_res[i]}) for i in range(0, len(pcs))]
