@@ -11,7 +11,7 @@ import pgeocode
 
 name = "arlulaapi"
 
-
+# Object generator that converts returned JSON into a Python object
 class ArlulaObj(object):
     def __init__(self, d):
         for a, b in d.items():
@@ -24,11 +24,11 @@ class ArlulaObj(object):
     def __repr__(self):
         return str(['{}: {}'.format(attr, value) for attr, value in self.__dict__.items()])[1:-1].replace('\'', '')
 
-
+# Exception when group searching
 def gsearch_exception(r, e):
     return("request failed")
 
-
+# Custom Exception Class
 class ArlulaSessionError(Exception):
     def __init__(self, value):
         self.value = value
@@ -36,14 +36,16 @@ class ArlulaSessionError(Exception):
     def __str__(self):
         return self.value
 
-
+# Custom Warning Class
 class ArlulaSessionWarning(Warning):
     pass
 
-
+# The ArlulaSession code
+# At some point, this should be separated into a diff file
 class ArlulaSession:
 
     def __init__(self, key, secret):
+        # Encode the key and secret
         def atob(x): return x.encode('utf-8')
         self.token = base64.b64encode(atob(
             key + ':' + secret)).decode('utf-8')
@@ -52,8 +54,22 @@ class ArlulaSession:
         }
         self.baseURL = "https://api.arlula.com"
         self.max_cloud = 100
+        # Supplier max bounds on cloud values
         self.max_cloud_vals = {"landsat": 100, "SIIS": 100}
         self.validate_creds()
+
+    # Enables use of `with` keyword
+    def __enter__(self):
+        return self
+
+    # Enables use of `with` keyword
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+    # Removes sensitive information
+    def close(self):
+        self.token = None
+        self.header = None
 
     def set_max_cloud(self, val):
         if (val<0 or val > 100) :
@@ -162,6 +178,7 @@ class ArlulaSession:
     def order(self,
               id=None,
               eula=None,
+              trim=False,
               seats=None,
               webhooks=[],
               emails=[]):
@@ -173,6 +190,7 @@ class ArlulaSession:
         payload = json.dumps({
             "id": id,
             "eula": eula,
+            "trim": trim,
             "seats": seats,
             "webhooks": webhooks,
             "emails": emails

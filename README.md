@@ -11,7 +11,16 @@ pip install arlulaapi
 Instantiate an ArlulaSession object using your API credentials as below. This will validate your credentials and store them for the remainder of the session.
 ```python
 import arlulaapi
+
+"""using the `with` keyword (recommended)"""
+with arlula_session as arlulaapi.ArlulaSession(key, secret) :
+    # Call required methods
+
+"""explicitly defining the session"""
 arlula_session = arlulaapi.ArlulaSession(key, secret)
+# Call required methods
+# close() removes your key and secret from the session, if desired
+arlula_session.close()
 ```
 
 ## Utilities
@@ -50,6 +59,7 @@ search_result = arlula_session.search(
 order = arlula_session.order(
     id=orderId,
     eula="",
+    trim=False,
     seats=1,
     webhooks=[...],
     emails=[...]
