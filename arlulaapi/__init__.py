@@ -79,7 +79,9 @@ class ArlulaSession:
     def get_max_cloud(self):
         return self.max_cloud
 
-    def filter_cloud(self, r):
+    def filter(self, r):
+        if r['supplier']=="" :
+            return False
         return r['cloud']/self.max_cloud_vals.get(r["supplier"])*100<=self.max_cloud
 
     def validate_creds(self):
@@ -117,7 +119,7 @@ class ArlulaSession:
         if response.status_code != 200:
             raise ArlulaSessionError(response.text)
         else:
-            return [ArlulaObj(x) for x in json.loads(response.text) if self.filter_cloud(x)]
+            return [ArlulaObj(x) for x in json.loads(response.text) if self.filter(x)]
 
     def gsearch(self,
                 params):
@@ -140,7 +142,7 @@ class ArlulaSession:
         response = grequests.map(searches, exception_handler=gsearch_exception)
         result = []
         for r in response:
-            result.append([ArlulaObj(x) for x in json.loads(r.text) if self.filter_cloud(x)])
+            result.append([ArlulaObj(x) for x in json.loads(r.text) if self.filter(x)])
         return result
 
     def get_order(self,
