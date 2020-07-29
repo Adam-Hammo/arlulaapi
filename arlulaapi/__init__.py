@@ -55,7 +55,7 @@ class ArlulaSession:
         self.baseURL = "https://api.arlula.com"
         self.max_cloud = 100
         # Supplier max bounds on cloud values
-        self.max_cloud_vals = {"landsat": 100, "SIIS": 100}
+        self.max_cloud_vals = {"landsat": 100, "SIIS": 100, "maxar": 100}
         self.validate_creds()
 
     # Enables use of `with` keyword
@@ -80,7 +80,7 @@ class ArlulaSession:
         return self.max_cloud
 
     def filter_cloud(self, r):
-        return r['cloud']/self.max_cloud_vals[r["supplier"]]*100<=self.max_cloud
+        return r['cloud']/self.max_cloud_vals.get(r["supplier"])*100<=self.max_cloud
 
     def validate_creds(self):
         url = self.baseURL+"/api/test"
