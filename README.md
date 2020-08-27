@@ -13,7 +13,7 @@ Instantiate an ArlulaSession object using your API credentials as below. This wi
 import arlulaapi
 
 """using the `with` keyword (recommended)"""
-with arlula_session as arlulaapi.ArlulaSession(key, secret) :
+with arlulaapi.ArlulaSession(key, secret) as arlula_session :
     # Call required methods
 
 """explicitly defining the session"""
