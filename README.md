@@ -1,4 +1,8 @@
 # **Arlula API Python Package**
+## About
+The Arlula API allows users to query databases of satellite imagery from vendors around the world. This powerful tool allows users to search and compare the quality of global image datasets and order them at scale. The Arlula API is a new way in which people from around the world can access timely satellite imagery and create their own data streams from space!  
+The Arlula Python package makes it easy to access all of the API functionality without having to do any of the hard work.  
+A more verbose tutorial can be found at https://arlula.com/using-your-arlula-api-key-python/.
 
 ## Prerequisites
 This package requires an active Arlula account and access to the API credentials. If you don't have an account, you can create one at [api.arlula.com/signup](https://api.arlula.com/signup).
